@@ -68,7 +68,7 @@ public class RegisterTab extends AppCompatActivity {
                 email = et_email.getText().toString();
                 id = et_id.getText().toString();
                 password = et_password.getText().toString();
-                User user = new User (name,email,id,password);
+                User user = new User (name,email,id,password,"null");
                 new CreateNewUser().execute();
             }
         });

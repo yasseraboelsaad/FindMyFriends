@@ -125,7 +125,7 @@
             <View
                 android:id="@+id/lowerSepparator"
                 android:layout_width="wrap_content"
-                android:layout_height="11dp"
+                android:layout_height="1dp"
                 android:background="@android:color/holo_blue_dark" />
 
         </LinearLayout>

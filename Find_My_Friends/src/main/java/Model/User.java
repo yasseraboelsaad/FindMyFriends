@@ -29,11 +29,12 @@ public class User {
     @Expose
     private String image;
 
-    public User(String Name, String email, String id, String password){
+    public User(String Name, String email, String id, String password, String image){
         this.Name=Name;
         this.email=email;
         this.id=id;
         this.password=password;
+        this.image=image;
     }
 
     public User(String Name, String email, String id, String password, Double xcoord, Double ycoord, String image){

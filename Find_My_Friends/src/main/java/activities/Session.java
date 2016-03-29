@@ -36,6 +36,10 @@ public class Session {
         prefs.edit().putString("image", id).commit();
 
     }
+    public void setPrivacy(int id) {
+        prefs.edit().putString("privacy",""+ id).commit();
+
+    }
 
     public String getuserid() {
         String id = prefs.getString("id","");
@@ -55,6 +59,10 @@ public class Session {
     }
     public String getuserImage() {
         String id = prefs.getString("image","");
+        return id;
+    }
+    public int getPrivacy() {
+        int id = Integer.parseInt(prefs.getString("privacy",""));
         return id;
     }
 }

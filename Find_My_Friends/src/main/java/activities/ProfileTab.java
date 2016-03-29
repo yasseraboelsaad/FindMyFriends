@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import Model.User;
 import uk.co.alt236.btlescan.R;
 import util.JSONParser;
 
@@ -42,24 +43,43 @@ public class ProfileTab extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_profile);
         session = new Session(this);
-        Bundle bundle = getIntent().getExtras();
         et_name = (EditText) findViewById(R.id.editText);
-        et_name.setText(session.getuserName());
         et_email = (EditText) findViewById(R.id.editText2);
-        et_email.setText(session.getuserEmail());
         et_id = (EditText) findViewById(R.id.editText3);
-        et_id.setText(session.getuserid());
         et_id.setKeyListener(null);
         et_password = (EditText) findViewById(R.id.editText4);
-        et_password.setText(session.getuserPassword());
         et_image = (EditText) findViewById(R.id.editText5);
-        et_image.setText(session.getuserImage());
+        btn_save = (Button) findViewById(R.id.button);
+        if (session.getPrivacy()==0) {
+            et_name.setText(session.getuserName());
+            et_email.setText(session.getuserEmail());
+            et_id.setText(session.getuserid());
+            et_password.setText(session.getuserPassword());
+            et_image.setText(session.getuserImage());
+        }else if (session.getPrivacy()==1){
+            et_name.setText(session.getuserName());
+            et_email.setText(session.getuserEmail());
+            et_id.setText(session.getuserid());
+            et_name.setKeyListener(null);
+            et_email.setKeyListener(null);
+            et_id.setKeyListener(null);
+            et_password.setVisibility(View.GONE);
+            et_image.setVisibility(View.GONE);
+            btn_save.setVisibility(View.GONE);
+        }else if (session.getPrivacy()==2){
+            et_name.setText(session.getuserName());
+            et_email.setText(session.getuserEmail());
+            et_id.setText(session.getuserid());
+            et_name.setKeyListener(null);
+            et_email.setKeyListener(null);
+            et_id.setKeyListener(null);
+            btn_save.setVisibility(View.GONE);
+        }
         iv_image = (ImageView) findViewById(R.id.imageView);
         if (session.getuserImage().contains("http")){
             Picasso.with(this).load(session.getuserImage()).into(iv_image);
 
         }
-        btn_save = (Button) findViewById(R.id.button);
         btn_save.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -69,7 +89,6 @@ public class ProfileTab extends AppCompatActivity {
                 session.setuserid(et_id.getText().toString());
                 session.setuserPassword(et_password.getText().toString());
                 session.setuserImage(et_image.getText().toString());
-
                 new UpdateUser().execute();
             }
         });

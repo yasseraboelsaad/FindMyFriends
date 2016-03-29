@@ -15,12 +15,13 @@ import uk.co.alt236.btlescan.R;
 public class MainActivity extends TabActivity implements TabHost.OnTabChangeListener {
     /** Called when the activity is first created. */
     TabHost tabHost;
-
+    private Session session;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        session = new Session(this);
+        session.setPrivacy(0);
         // Get TabHost Refference
         tabHost = getTabHost();
 
@@ -40,7 +41,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         tabHost.addTab(spec);
 
         /************* TAB2 ************/
-        intent = new Intent().setClass(this, FindTab.class);
+        intent = new Intent().setClass(this, FriendsTab.class);
         spec = tabHost.newTabSpec("Second").setIndicator("")
                 .setContent(intent);
         tabHost.addTab(spec);
@@ -48,6 +49,12 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         /************* TAB3 ************/
         intent = new Intent().setClass(this, ProfileTab.class);
         spec = tabHost.newTabSpec("Third").setIndicator("")
+                .setContent(intent);
+        tabHost.addTab(spec);
+
+        /************* TAB4 ************/
+        intent = new Intent().setClass(this, FindTab.class);
+        spec = tabHost.newTabSpec("Forth").setIndicator("")
                 .setContent(intent);
         tabHost.addTab(spec);
 
@@ -61,6 +68,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         TextView tv3 = (TextView) tabHost.getTabWidget().getChildAt(2).findViewById(android.R.id.title);
         tv3.setText("My Profile");
+
+        TextView tv4 = (TextView) tabHost.getTabWidget().getChildAt(3).findViewById(android.R.id.title);
+        tv4.setText("Search");
         // Set Tab1 as Default tab and change image
         tabHost.getTabWidget().setCurrentTab(0);
         //tabHost.getTabWidget().getChildAt(0).setBackgroundResource(R.drawable.tab1_over);

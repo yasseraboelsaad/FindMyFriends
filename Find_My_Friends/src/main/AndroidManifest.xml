@@ -42,8 +42,9 @@
             </intent-filter>
         </activity>
         <activity android:name="activities.LoginTab"  ></activity>
-        <activity android:name="activities.FindTab"  ></activity>
+        <activity android:name="activities.FriendsTab"  ></activity>
         <activity android:name="activities.ProfileTab"  ></activity>
+        <activity android:name="activities.FindTab"  ></activity>
         <activity
             android:name="activities.MainActivity"
             android:label="@string/app_name" >

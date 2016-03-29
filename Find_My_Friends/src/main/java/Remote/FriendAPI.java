@@ -1,38 +1,33 @@
 package Remote;
 
-
+import Model.Friend;
+import Model.FriendResponse;
 import Model.User;
 import Model.UserResponse;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
- * Created by Yasser on 28/3/16.
+ * Created by Yasser on 29/3/16.
  */
-public interface UserAPI {
+public interface FriendAPI {
     String baseurl ="http://63d02148.ngrok.io/FindMyFriends/";
-    @GET("get_all_users.php")
-    Call<UserResponse> getUser(@Query("id") String id);
+    @GET("get_all_friends.php")
+    Call<UserResponse> getFriends1(@Query("User1") String User1);
 
-    @GET("get_all_users.php")
-    Call<UserResponse> getUsername(@Query("Name") String Name);
-
-//    @POST("create_user.php")
-//    Call<User> createUser(@Body User user);
+    @GET("get_all_friends.php")
+    Call<FriendResponse> getFriends2(@Query("User1") String User1, @Query("User2") String User2);
 
     class Factory {
-        private static UserAPI service;
+        private static FriendAPI service;
 
-        public static UserAPI getInstance() {
+        public static FriendAPI getInstance() {
             if (service == null) {
                 Retrofit retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(baseurl).build();
-                service = retrofit.create(UserAPI.class);
+                service = retrofit.create(FriendAPI.class);
                 return service;
             }else {
                 return service;

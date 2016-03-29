@@ -1,5 +1,6 @@
 package activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -19,6 +18,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import Model.Friend;
+import Model.FriendResponse;
 import Model.User;
 import Model.UserResponse;
 import Remote.FriendAPI;
@@ -29,26 +30,19 @@ import retrofit2.Response;
 import uk.co.alt236.btlescan.R;
 
 /**
- * Created by Yasser on 30/3/16.
+ * Created by Yasser on 28/3/16.
  */
-public class FindTab extends AppCompatActivity {
+public class FriendsTab extends AppCompatActivity{
+
     private List<User> friendslist = new ArrayList<User>();
     ListView listView ;
     Session session;
-    EditText search;
-    Button go;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_find);
+        setContentView(R.layout.tab_friends);
         session = new Session(this);
-        search = (EditText) findViewById(R.id.editText6);
-        go =(Button) findViewById(R.id.button2);
-        go.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                populateFriendsList();
-            }
-        });
+        populateFriendsList();
     }
 
     private void populateListView() {
@@ -58,25 +52,25 @@ public class FindTab extends AppCompatActivity {
     }
 
     private void populateFriendsList() {
-        UserAPI.Factory.getInstance().getUsername(search.getText().toString()).enqueue(new Callback<UserResponse>() {
+        FriendAPI.Factory.getInstance().getFriends1(session.getuserid()).enqueue(new Callback<UserResponse>() {
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                for (int i = 0; i < response.body().getUsers().size(); i++) {
+                for (int i=0;i<response.body().getUsers().size();i++){
                     Log.d("###Friends", response.body().getUsers().get(i).getName());
-                    String name = response.body().getUsers().get(i).getName();
-                    String email = response.body().getUsers().get(i).getEmail();
-                    String id = response.body().getUsers().get(i).getId();
-                    String image = response.body().getUsers().get(i).getPassword();
-                    friendslist.add(new User(name, email, id, "", image));
+                    String name =response.body().getUsers().get(i).getName();
+                    String email =response.body().getUsers().get(i).getEmail();
+                    String id =response.body().getUsers().get(i).getId();
+                    String image =response.body().getUsers().get(i).getPassword();
+                    friendslist.add(new User(name,email,id,"",image));
                 }
-                Log.d("Friends list", friendslist.get(0).getName());
+//                Log.d("Friends list", friendslist.get(0).getName());
                 populateListView();
                 registerClickCallback();
             }
 
             @Override
             public void onFailure(Call<UserResponse> call, Throwable t) {
-                Log.e("Error fetch friends", t.getMessage());
+                Log.e("Error fetch friends",t.getMessage());
             }
         });
     }
@@ -89,7 +83,7 @@ public class FindTab extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
                 User clickedUser = friendslist.get(position);
                 //go to profile activity
-                Toast.makeText(FindTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
+                Toast.makeText(FriendsTab.this, "You clicked "+position+" which is "+clickedUser.getId(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -97,7 +91,7 @@ public class FindTab extends AppCompatActivity {
     private class MyListAdapter extends ArrayAdapter<User>{
 
         public MyListAdapter() {
-            super(FindTab.this,R.layout.list_item_friend,friendslist);
+            super(FriendsTab.this,R.layout.list_item_friend,friendslist);
         }
 
         @Override
@@ -113,7 +107,7 @@ public class FindTab extends AppCompatActivity {
             if (!currentUser.getImage().contains("http")){
                 image.setImageDrawable(getDrawable(R.drawable.default_image));
             }else {
-                Picasso.with(FindTab.this).load(currentUser.getImage()).into(image);
+                Picasso.with(FriendsTab.this).load(currentUser.getImage()).into(image);
             }
             TextView nameText = (TextView)itemView.findViewById(R.id.item_tv_name);
             nameText.setText(currentUser.getName());
