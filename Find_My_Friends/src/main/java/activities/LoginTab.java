@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -29,6 +30,9 @@ public class LoginTab extends AppCompatActivity {
     Button btn_login;
     String id,password;
     private ProgressDialog pDialog;
+    Boolean success = false;
+    Bundle bundle = new Bundle();
+    private Session session;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,9 @@ public class LoginTab extends AppCompatActivity {
         et_id= (EditText) findViewById(R.id.et_id_login);
         et_password= (EditText) findViewById(R.id.et_password_login);
         btn_login = (Button) findViewById(R.id.btn_login);
+
+        session = new Session(this);
+
         btn_login.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -50,8 +57,25 @@ public class LoginTab extends AppCompatActivity {
                 UserAPI.Factory.getInstance().getUser(id).enqueue(new Callback<UserResponse>() {
                     @Override
                     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                        pDialog.dismiss();
-                        startActivity(new Intent("android.intent.action.MAIN2"));
+                        if (password.equals(response.body().getUsers().get(0).getPassword())) {
+                            pDialog.dismiss();
+                            success = true;
+                            String name =response.body().getUsers().get(0).getName();
+                            String email =response.body().getUsers().get(0).getEmail();
+                            String id =response.body().getUsers().get(0).getId();
+                            String password =response.body().getUsers().get(0).getPassword();
+                            String image =response.body().getUsers().get(0).getImage();
+
+                            session.setuserid(id);
+                            session.setuserName(name);
+                            session.setuserEmail(email);
+                            session.setuserPassword(password);
+                            session.setuserImage(image);
+                            startActivity(new Intent("android.intent.action.MAIN4"));
+                        }else {
+                            pDialog.dismiss();
+                            Log.d("Error","Login failed");
+                        }
                     }
 
                     @Override
@@ -60,7 +84,18 @@ public class LoginTab extends AppCompatActivity {
                         Log.e("Failed",t.getMessage());
                     }
                 });
+                if (success){
+                    //Add the bundle to the intent
+
+                }
             }
         });
+    }
+    public void setBundle(String name, String email, String id, String password){
+        bundle.putString("Name", name);
+        bundle.putString("id", id);
+        bundle.putString("email", email);
+        bundle.putString("password", password);
+
     }
 }

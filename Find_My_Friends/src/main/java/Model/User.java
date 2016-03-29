@@ -25,6 +25,9 @@ public class User {
     @SerializedName("ycoord")
     @Expose
     private Double ycoord;
+    @SerializedName("image")
+    @Expose
+    private String image;
 
     public User(String Name, String email, String id, String password){
         this.Name=Name;
@@ -33,13 +36,14 @@ public class User {
         this.password=password;
     }
 
-    public User(String Name, String email, String id, String password, Double xcoord, Double ycoord){
+    public User(String Name, String email, String id, String password, Double xcoord, Double ycoord, String image){
         this.Name=Name;
         this.email=email;
         this.id=id;
         this.password=password;
         this.xcoord=xcoord;
         this.ycoord=ycoord;
+        this.image=image;
     }
     /**
      *
@@ -149,9 +153,28 @@ public class User {
         this.ycoord = ycoord;
     }
 
+    /**
+     *
+     * @return
+     * The image
+     */
+    public String getImage() {
+        return image;
+    }
+
+    /**
+     *
+     * @param image
+     * The ycoord
+     */
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+
     @Override
     public String toString() {
-        return "{"+getName()+","+getId()+","+getEmail()+","+getPassword()+","+getXcoord()+","+getYcoord()+"}";
+        return "{"+getName()+","+getId()+","+getEmail()+","+getPassword()+","+getXcoord()+","+getYcoord()+","+getImage()+"}";
     }
 
 }

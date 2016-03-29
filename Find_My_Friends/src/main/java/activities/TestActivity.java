@@ -3,6 +3,7 @@ package activities;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -58,6 +59,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     private BluetoothLeDeviceStore mDeviceStore;
     TextView location;
     String UUID;
+    private Session session;
 
     double x0;
     double y0;
@@ -69,6 +71,11 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     double y2;
     double r2;
 
+    double xcoord,ycoord;
+
+    String url_update_user = "http://ed18867c.ngrok.io/FindMyFriends/update_user.php";
+    JSONParser jsonParser = new JSONParser();
+    private ProgressDialog pDialog;
 
     private final BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
@@ -104,6 +111,9 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
                 x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
                 y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
+                xcoord=x0;
+                ycoord=y0;
+                new UpdateUser().execute();
             }
 
             @Override
@@ -178,6 +188,9 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                         double intersectionPoint2_x = point2_x - rx;
                         double intersectionPoint1_y = point2_y + ry;
                         double intersectionPoint2_y = point2_y - ry;
+                        xcoord=intersectionPoint1_x;
+                        ycoord=intersectionPoint1_y;
+                        new UpdateUser().execute();
                         location.setText("Your location is either: (" + intersectionPoint1_x + "," + intersectionPoint1_y + ") or (" + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
                     }
 
@@ -276,9 +289,14 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                                 double cond2 = (intersectionPoint2_x - 2) * (intersectionPoint2_x - 2) + (intersectionPoint2_y - 2) * (intersectionPoint2_y - 2);
                                 if (cond1 <= r2 * r2 + 2 && cond1 >= r2 * r2 - 2) {
                                     location.setText("Your current location is: " + intersectionPoint1_x + "," + intersectionPoint1_y + ")");
-                                    
+                                    xcoord=intersectionPoint1_x;
+                                    ycoord=intersectionPoint1_y;
+                                    new UpdateUser().execute();
                                 } else if (cond2 <= r2 * r2 + 2 && cond2 >= r2 * r2 - 2) {
                                     location.setText("Your current location is: " + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
+                                    xcoord=intersectionPoint2_x;
+                                    ycoord=intersectionPoint2_y;
+                                    new UpdateUser().execute();
                                 } else {
                                     location.setText("Your current location could not be determined.");
                                 }
@@ -312,6 +330,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        session = new Session(this);
         ButterKnife.bind(this);
         mList.setOnItemClickListener(this);
         mDeviceStore = new BluetoothLeDeviceStore();
@@ -410,4 +429,52 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                         R.string.formatter_item_count,
                         String.valueOf(count)));
     }
+
+    class UpdateUser extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(TestActivity.this);
+            pDialog.setMessage("Updating Location..");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            //Get the bundle
+            Bundle bundle = getIntent().getExtras();
+            Log.d("###Name",session.getuserid());
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("Name", session.getuserName()));
+            params.add(new BasicNameValuePair("email", session.getuserEmail()));
+            params.add(new BasicNameValuePair("id", session.getuserid()));
+            params.add(new BasicNameValuePair("password", session.getuserPassword()));
+            params.add(new BasicNameValuePair("xcoord", ""+xcoord));
+            params.add(new BasicNameValuePair("ycoord", ""+ycoord));
+            params.add(new BasicNameValuePair("image", session.getuserImage()));
+
+            JSONObject json = jsonParser.makeHttpRequest(url_update_user,
+                    "POST", params);
+
+            return null;
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+        }
+
+    }
+
 }

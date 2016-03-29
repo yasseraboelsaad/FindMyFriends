@@ -2,102 +2,11 @@
 <items version="2" >
 
     <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.6.0/98476622f10715998eacf9240d6b479f12c66143/okio-1.6.0.jar"
+        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
         jumboMode="false"
         revision="22.0.1"
-        sha1="98476622f10715998eacf9240d6b479f12c66143">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/okio-1.6.0-313313984fa9fcf3ba24c0c2708e12aee4952631.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.2.0/f7873a2ebde246a45c2a8d6f3247108b4c88a879/okhttp-3.2.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="f7873a2ebde246a45c2a8d6f3247108b4c88a879">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/okhttp-3.2.0-657c334eb638e96b373de0928a8cd54d104dadb9.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.0.0/5c06d197fb7fa875ad452f562e3310dd9949d066/retrofit-2.0.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="5c06d197fb7fa875ad452f562e3310dd9949d066">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/retrofit-2.0.0-89e37a4ba011c2da4577a19c80b515a8aa40fff6.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife/7.0.1/d5d13ea991eab0252e3710e5df3d6a9d4b21d461/butterknife-7.0.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="d5d13ea991eab0252e3710e5df3d6a9d4b21d461">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/butterknife-7.0.1-e7ad56efa2d24bd982430c3886241646bdd2fde7.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/converter-gson/2.0.0/49eb3ad545e7701234e4dd83db8dc1344b577f23/converter-gson-2.0.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="49eb3ad545e7701234e4dd83db8dc1344b577f23">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/converter-gson-2.0.0-3cf7ae7c328bfe6977f7cc836f172d137054e299.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/libs/internal_impl-22.2.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="57f2ab85c164ff1676ec64dee787981c046fab79">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/internal_impl-22.2.0-e40ce26f56119cb71a8d31f6c8d368cdf9317c4f.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.commonsware.cwac/sacklist/1.0.2/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="e2a9a01b65a179a0160ecf9c425ff34832f7b3ee">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-1191be11403f7ed0e873a9789e7eba4f490b37fa.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.0/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="1ee588ff2c4daf7b97c1cbf922a6c7f027285c2f">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-8789ba595a973388d2673fb28444b67c25cea711.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/22.2.0/support-annotations-22.2.0.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="66b42a1f3eb7676070b7ef7f14b603483aecbee1">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/support-annotations-22.2.0-72662892e89ba6b0cb522762208daaab4748aa2b.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.0/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="73753982da6bde518f3a4c6b372749981d14d1a0">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-1bd7ba8deec68fdac10658ff02b0ca7e61604404.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.commonsware.cwac/merge/1.1.0/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="40e8bc647493f57be01c9f6fe621fe20f2f759bd">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-29e3d2781b7ce7b63da1fcd3abc84546605ea11d.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/libs/EasyCursor-0.1.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="44a42491bea1d9813b5b97e65022114b04881384">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/EasyCursor-0.1.1-b5b8aaca8efdee4eae195dcfb266418af088afd2.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/Find My Friends/library/unspecified/jars/classes.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="67cebfd1cd5d55e87a96fbe997ce6226ea32567d">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-803012dd4b7bb727823a45680a3a678bf7ee0021.jar" />
-    </item>
-    <item
-        jar="/Users/Yasser/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.6.1/b9d63507329a7178e026fc334f87587ee5070ac5/gson-2.6.1.jar"
-        jumboMode="false"
-        revision="22.0.1"
-        sha1="b9d63507329a7178e026fc334f87587ee5070ac5">
-        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/gson-2.6.1-1111a018691eed888538ebcdbd0bbed22b781a3d.jar" />
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/picasso-2.5.2-7dd5af3d5ce0760903e7e40b658313e41b3cd28e.jar" />
     </item>
 
 </items>

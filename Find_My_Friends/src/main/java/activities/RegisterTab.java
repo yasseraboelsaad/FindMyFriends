@@ -44,7 +44,7 @@ public class RegisterTab extends AppCompatActivity {
     String id;
     String password;
     private ProgressDialog pDialog;
-
+    private Session session;
     private String url_create_user;
     private static final String TAG_SUCCESS = "success";
 
@@ -52,6 +52,7 @@ public class RegisterTab extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_register);
+        session = new Session(this);
         url_create_user = getResources().getString(R.string.localhost_link)+"/FindMyFriends/create_user.php";
         et_name= (EditText) findViewById(R.id.et_name);
         et_email= (EditText) findViewById(R.id.et_email);
@@ -115,7 +116,12 @@ public class RegisterTab extends AppCompatActivity {
 //
 //               if (success == 1) {
 //                    // successfully created product
-                  startActivity(new Intent("android.intent.action.MAIN2"));
+            session.setuserid(id);
+            session.setuserName(name);
+            session.setuserEmail(email);
+            session.setuserPassword(password);
+            session.setuserImage("NULL");
+                  startActivity(new Intent("android.intent.action.MAIN4"));
 //                    // closing this screen
 //                }
             //else {
