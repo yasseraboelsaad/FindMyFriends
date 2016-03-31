@@ -50,6 +50,13 @@
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
         </activity>
+        <activity android:name="activities.MapsActivity"  >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN6" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name="activities.FindTab"  ></activity>
         <activity
             android:name="activities.MainActivity"
@@ -64,6 +71,10 @@
         <service
             android:name="services.BluetoothLeService"
             android:enabled="true" />
+        <metad-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA-u73Q_Pf2mIfqLStP2HAynmiVbbdGd3A"/>
+
 
     </application>
     <!--  Internet Permissions -->

@@ -1,6 +1,7 @@
 package activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,14 +41,16 @@ public class ProfileTab extends AppCompatActivity {
     EditText et_id;
     EditText et_password;
     EditText et_image;
-    EditText et_xcoord;
     ImageView iv_image;
     Button btn_save;
     TextView txt_image;
     TextView txt_password;
     private Session session;
+    Button btn_location;
     private ProgressDialog pDialog;
-    String url_update_user = "http://ed18867c.ngrok.io/FindMyFriends/update_user.php";
+    String url_update_user = "http://2690c7d9.ngrok.io/FindMyFriends/update_user.php";
+    String url_add_friend = "http://2690c7d9.ngrok.io/FindMyFriends/create_friends.php";
+    String url_delete_friend = "http://2690c7d9.ngrok.io/FindMyFriends/delete_friends.php";
     JSONParser jsonParser = new JSONParser();
 
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,7 @@ public class ProfileTab extends AppCompatActivity {
         txt_image = (TextView) findViewById(R.id.textView5);
         txt_password = (TextView) findViewById(R.id.textView4);
         iv_image = (ImageView) findViewById(R.id.imageView);
-        et_xcoord = (EditText) findViewById(R.id.editText7);
+        btn_location = (Button) findViewById(R.id.btn_location);
         pDialog = new ProgressDialog(ProfileTab.this);
         pDialog.setMessage("Loading ..");
         pDialog.setIndeterminate(false);
@@ -78,7 +81,6 @@ public class ProfileTab extends AppCompatActivity {
             et_id.setText(session.getuserid());
             et_password.setText(session.getuserPassword());
             et_image.setText(session.getuserImage());
-            et_xcoord.setVisibility(View.GONE);
             if (session.getuserImage().contains("http")){
                 Picasso.with(ProfileTab.this).load(session.getuserImage()).into(iv_image);
             }else {
@@ -105,8 +107,8 @@ public class ProfileTab extends AppCompatActivity {
             et_image.setVisibility(View.GONE);
             txt_image.setVisibility(View.GONE);
             txt_password.setVisibility(View.GONE);
-            et_xcoord.setVisibility(View.GONE);
             btn_save.setText("Add Friend");
+            btn_location.setVisibility(View.GONE);
             UserAPI.Factory.getInstance().getUser(session.getProfile()).enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
@@ -127,21 +129,26 @@ public class ProfileTab extends AppCompatActivity {
 
                 }
             });
+            btn_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AddFriend().execute();
+                }
+            });
         }
         //Friend
         else if (session.getPrivacy()==1){
-            txt_image.setText("Y-coordinate");
-            txt_password.setText("X-coordinate");
+            txt_image.setVisibility(View.GONE);
+            txt_password.setVisibility(View.GONE);
             btn_save.setText("Remove Friend");
             et_password.setVisibility(View.GONE);
+            et_image.setVisibility(View.GONE);
             UserAPI.Factory.getInstance().getUser(session.getProfile()).enqueue(new Callback<UserResponse>() {
                 @Override
                 public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                     et_name.setText(response.body().getUsers().get(0).getName());
                     et_email.setText(response.body().getUsers().get(0).getEmail());
                     et_id.setText(response.body().getUsers().get(0).getId());
-                    et_xcoord.setText(response.body().getUsers().get(0).getXcoord() + "");
-                    et_image.setText(response.body().getUsers().get(0).getYcoord() + "");
                     if (response.body().getUsers().get(0).getImage() != null && response.body().getUsers().get(0).getImage().contains("http")) {
                         Picasso.with(ProfileTab.this).load(response.body().getUsers().get(0).getImage()).into(iv_image);
                     } else {
@@ -154,6 +161,18 @@ public class ProfileTab extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<UserResponse> call, Throwable t) {
 
+                }
+            });
+            btn_save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new RemoveFriend().execute();
+                }
+            });
+            btn_location.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent("android.intent.action.MAIN6"));
                 }
             });
         }
@@ -199,6 +218,88 @@ public class ProfileTab extends AppCompatActivity {
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once done
             pDialog.dismiss();
+        }
+
+    }
+    class AddFriend extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ProfileTab.this);
+            pDialog.setMessage("Sending request..");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            //Get the bundle
+            Bundle bundle = getIntent().getExtras();
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("User1", session.getuserid()));
+            params.add(new BasicNameValuePair("User2", session.getProfile()));
+
+            JSONObject json = jsonParser.makeHttpRequest(url_add_friend,
+                    "POST", params);
+
+            return null;
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            session.setProfile(session.getuserid());
+        }
+
+    }
+
+    class RemoveFriend extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(ProfileTab.this);
+            pDialog.setMessage("Sending request..");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+
+        protected String doInBackground(String... args) {
+
+            //Get the bundle
+            Bundle bundle = getIntent().getExtras();
+            // Building Parameters
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("User1", session.getuserid()));
+            params.add(new BasicNameValuePair("User2", session.getProfile()));
+            JSONObject json = jsonParser.makeHttpRequest(url_delete_friend,
+                    "POST", params);
+
+            return null;
+        }
+
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once done
+            pDialog.dismiss();
+            session.setProfile(session.getuserid());
         }
 
     }

@@ -16,7 +16,7 @@ import retrofit2.http.Query;
  * Created by Yasser on 28/3/16.
  */
 public interface UserAPI {
-    String baseurl ="http://f21a97da.ngrok.io/FindMyFriends/";
+    String baseurl ="http://2690c7d9.ngrok.io/FindMyFriends/";
     @GET("get_all_users.php")
     Call<UserResponse> getUser(@Query("id") String id);
 
