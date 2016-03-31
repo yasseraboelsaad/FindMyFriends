@@ -91,7 +91,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 //                tabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.tab_login);
 //            else if(i==1)
 //                tabHost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.tab_register);
-
+            if (i==2){
+                session.setProfile(session.getuserid());
+            }
         }
 
 

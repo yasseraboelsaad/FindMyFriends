@@ -43,7 +43,13 @@
         </activity>
         <activity android:name="activities.LoginTab"  ></activity>
         <activity android:name="activities.FriendsTab"  ></activity>
-        <activity android:name="activities.ProfileTab"  ></activity>
+        <activity android:name="activities.ProfileTab"  >
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN5" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        </activity>
         <activity android:name="activities.FindTab"  ></activity>
         <activity
             android:name="activities.MainActivity"

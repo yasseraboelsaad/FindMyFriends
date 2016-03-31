@@ -72,6 +72,7 @@ public class LoginTab extends AppCompatActivity {
                                 session.setuserEmail(email);
                                 session.setuserPassword(password);
                                 session.setuserImage(image);
+                                session.setProfile(id);
                                 startActivity(new Intent("android.intent.action.MAIN4"));
                             } else {
                                 pDialog.dismiss();

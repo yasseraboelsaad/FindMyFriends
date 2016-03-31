@@ -41,6 +41,11 @@ public class Session {
 
     }
 
+    public void setProfile(String id) {
+        prefs.edit().putString("profile", id).commit();
+
+    }
+
     public String getuserid() {
         String id = prefs.getString("id","");
         return id;
@@ -62,7 +67,11 @@ public class Session {
         return id;
     }
     public int getPrivacy() {
-        int id = Integer.parseInt(prefs.getString("privacy",""));
+        int id = Integer.parseInt(prefs.getString("privacy", ""));
+        return id;
+    }
+    public String getProfile() {
+        String id = prefs.getString("profile", "");
         return id;
     }
 }

@@ -1,5 +1,7 @@
 package activities;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,6 +39,8 @@ public class FindTab extends AppCompatActivity {
     Session session;
     EditText search;
     Button go;
+    private ProgressDialog pDialog;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_find);
@@ -46,6 +50,11 @@ public class FindTab extends AppCompatActivity {
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                pDialog = new ProgressDialog(FindTab.this);
+                pDialog.setMessage("Loading ..");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(true);
+                pDialog.show();
                 populateFriendsList();
             }
         });
@@ -72,6 +81,7 @@ public class FindTab extends AppCompatActivity {
                 Log.d("Friends list", friendslist.get(0).getName());
                 populateListView();
                 registerClickCallback();
+                pDialog.dismiss();
             }
 
             @Override
@@ -90,6 +100,9 @@ public class FindTab extends AppCompatActivity {
                 User clickedUser = friendslist.get(position);
                 //go to profile activity
                 Toast.makeText(FindTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
+                session.setProfile(clickedUser.getId());
+                session.setPrivacy(0);
+                startActivity(new Intent("android.intent.action.MAIN5"));
             }
         });
     }

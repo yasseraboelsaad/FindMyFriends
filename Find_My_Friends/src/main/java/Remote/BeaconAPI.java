@@ -17,7 +17,7 @@ import uk.co.alt236.btlescan.R;
  */
 public interface BeaconAPI {
 
-    String baseurl ="http://63d02148.ngrok.io/FindMyFriends/";
+    String baseurl ="http://f21a97da.ngrok.io/FindMyFriends/";
     //@GET("get_beacon_details.php?UUID=3f009ed7-ebbf-568e-a2a2-a4bfe51e64d1")
     @GET("get_beacon_details.php")
     Call<BeaconResponse> getBeacon(@Query("UUID") String UUID);

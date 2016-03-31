@@ -1,6 +1,8 @@
 package activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,11 +39,17 @@ public class FriendsTab extends AppCompatActivity{
     private List<User> friendslist = new ArrayList<User>();
     ListView listView ;
     Session session;
+    private ProgressDialog pDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_friends);
         session = new Session(this);
+        pDialog = new ProgressDialog(FriendsTab.this);
+        pDialog.setMessage("Loading ..");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(true);
+        pDialog.show();
         populateFriendsList();
     }
 
@@ -66,6 +74,7 @@ public class FriendsTab extends AppCompatActivity{
 //                Log.d("Friends list", friendslist.get(0).getName());
                 populateListView();
                 registerClickCallback();
+                pDialog.dismiss();
             }
 
             @Override
@@ -84,6 +93,9 @@ public class FriendsTab extends AppCompatActivity{
                 User clickedUser = friendslist.get(position);
                 //go to profile activity
                 Toast.makeText(FriendsTab.this, "You clicked "+position+" which is "+clickedUser.getId(), Toast.LENGTH_LONG).show();
+                session.setProfile(clickedUser.getId());
+                session.setPrivacy(1);
+                startActivity(new Intent("android.intent.action.MAIN5"));
             }
         });
     }

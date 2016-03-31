@@ -121,6 +121,7 @@ public class RegisterTab extends AppCompatActivity {
             session.setuserEmail(email);
             session.setuserPassword(password);
             session.setuserImage("NULL");
+            session.setProfile(id);
                   startActivity(new Intent("android.intent.action.MAIN4"));
 //                    // closing this screen
 //                }
