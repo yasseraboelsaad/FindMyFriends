@@ -1,7 +1,6 @@
 package activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,21 +19,18 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.Friend;
-import Model.FriendResponse;
 import Model.User;
 import Model.UserResponse;
 import Remote.FriendAPI;
-import Remote.UserAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import uk.co.alt236.btlescan.R;
 
 /**
- * Created by Yasser on 28/3/16.
+ * Created by Yasser on 1/4/16.
  */
-public class FriendsTab extends AppCompatActivity{
+public class NotificationsActivity extends AppCompatActivity {
 
     private List<User> friendslist = new ArrayList<User>();
     ListView listView ;
@@ -43,9 +39,9 @@ public class FriendsTab extends AppCompatActivity{
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_friends);
+        setContentView(R.layout.activity_notifications);
         session = new Session(this);
-        pDialog = new ProgressDialog(FriendsTab.this);
+        pDialog = new ProgressDialog(NotificationsActivity.this);
         pDialog.setMessage("Loading ..");
         pDialog.setIndeterminate(false);
         pDialog.setCancelable(true);
@@ -55,30 +51,18 @@ public class FriendsTab extends AppCompatActivity{
 
     private void populateListView() {
         ArrayAdapter<User> adapter = new MyListAdapter();
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView2);
         listView.setAdapter(adapter);
     }
 
     private void populateFriendsList() {
-        FriendAPI.Factory.getInstance().getFriends1(session.getuserid()).enqueue(new Callback<UserResponse>() {
-            @Override
-            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
-                for (int i=0;i<response.body().getUsers().size();i++){
-                    if (Integer.parseInt(response.body().getUsers().get(i).getstatus())==1) {
-                        Log.d("###Friends", response.body().getUsers().get(i).getName());
-                        String name = response.body().getUsers().get(i).getName();
-                        String email = response.body().getUsers().get(i).getEmail();
-                        String id = response.body().getUsers().get(i).getId();
-                        String image = response.body().getUsers().get(i).getPassword();
-                        friendslist.add(new User(name, email, id, "", image));
-                    }
-                }
+
                 FriendAPI.Factory.getInstance().getFriends2(session.getuserid()).enqueue(new Callback<UserResponse>() {
                     @Override
                     public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                         for (int i = 0; i < response.body().getUsers().size(); i++) {
                             Log.d("###Friends", response.body().getUsers().get(i).getName());
-                            if (Integer.parseInt(response.body().getUsers().get(i).getstatus()) == 1) {
+                            if (Integer.parseInt(response.body().getUsers().get(i).getstatus()) == 0) {
                                 Log.d("###Friends", response.body().getUsers().get(i).getName());
                                 String name = response.body().getUsers().get(i).getName();
                                 String email = response.body().getUsers().get(i).getEmail();
@@ -98,26 +82,19 @@ public class FriendsTab extends AppCompatActivity{
                     }
                 });
 //                Log.d("Friends list", friendslist.get(0).getName());
-            }
-
-            @Override
-            public void onFailure(Call<UserResponse> call, Throwable t) {
-                Log.e("Error fetch friends",t.getMessage());
-            }
-        });
     }
 
     private void registerClickCallback() {
-        ListView list= (ListView)findViewById(R.id.listView);
+        ListView list= (ListView)findViewById(R.id.listView2);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
                 User clickedUser = friendslist.get(position);
                 //go to profile activity
-                Toast.makeText(FriendsTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
+                Toast.makeText(NotificationsActivity.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
                 session.setProfile(clickedUser.getId());
-                session.setPrivacy(1);
+                session.setPrivacy(2);
                 startActivity(new Intent("android.intent.action.MAIN5"));
             }
         });
@@ -126,7 +103,7 @@ public class FriendsTab extends AppCompatActivity{
     private class MyListAdapter extends ArrayAdapter<User>{
 
         public MyListAdapter() {
-            super(FriendsTab.this,R.layout.list_item_friend,friendslist);
+            super(NotificationsActivity.this,R.layout.list_item_friend,friendslist);
         }
 
         @Override
@@ -142,7 +119,7 @@ public class FriendsTab extends AppCompatActivity{
             if (!currentUser.getImage().contains("http")){
                 image.setImageDrawable(getDrawable(R.drawable.default_image));
             }else {
-                Picasso.with(FriendsTab.this).load(currentUser.getImage()).into(image);
+                Picasso.with(NotificationsActivity.this).load(currentUser.getImage()).into(image);
             }
             TextView nameText = (TextView)itemView.findViewById(R.id.item_tv_name);
             nameText.setText(currentUser.getName());

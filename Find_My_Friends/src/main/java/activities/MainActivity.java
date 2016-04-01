@@ -58,6 +58,12 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
                 .setContent(intent);
         tabHost.addTab(spec);
 
+        /************* TAB5 ************/
+        intent = new Intent().setClass(this, NotificationsActivity.class);
+        spec = tabHost.newTabSpec("Fifth").setIndicator("")
+                .setContent(intent);
+        tabHost.addTab(spec);
+
         // Set drawable images to tab
         //tabHost.getTabWidget().getChildAt(1).setBackgroundResource(R.drawable.tab_register);
         TextView tv = (TextView) tabHost.getTabWidget().getChildAt(0).findViewById(android.R.id.title);
@@ -71,6 +77,9 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
         TextView tv4 = (TextView) tabHost.getTabWidget().getChildAt(3).findViewById(android.R.id.title);
         tv4.setText("Search");
+
+        TextView tv5 = (TextView) tabHost.getTabWidget().getChildAt(4).findViewById(android.R.id.title);
+        tv5.setText("Notifications");
         // Set Tab1 as Default tab and change image
         tabHost.getTabWidget().setCurrentTab(0);
         //tabHost.getTabWidget().getChildAt(0).setBackgroundResource(R.drawable.tab1_over);

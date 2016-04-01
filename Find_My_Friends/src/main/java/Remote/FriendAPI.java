@@ -21,6 +21,9 @@ public interface FriendAPI {
     @GET("get_all_friends.php")
     Call<UserResponse> getFriends2(@Query("User2") String User2);
 
+    @GET("get_all_friends.php")
+    Call<FriendResponse> getFriendstatus(@Query("User1") String User1, @Query("User2") String User2);
+
     class Factory {
         private static FriendAPI service;
 
