@@ -14,12 +14,12 @@ import retrofit2.http.Query;
  * Created by Yasser on 29/3/16.
  */
 public interface FriendAPI {
-    String baseurl ="http://2690c7d9.ngrok.io/FindMyFriends/";
+    String baseurl ="http://7eccf019.ngrok.io/FindMyFriends/";
     @GET("get_all_friends.php")
     Call<UserResponse> getFriends1(@Query("User1") String User1);
 
     @GET("get_all_friends.php")
-    Call<FriendResponse> getFriends2(@Query("User1") String User1, @Query("User2") String User2);
+    Call<UserResponse> getFriends2(@Query("User2") String User2);
 
     class Factory {
         private static FriendAPI service;

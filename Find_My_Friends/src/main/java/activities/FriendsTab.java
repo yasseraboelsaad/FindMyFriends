@@ -64,17 +64,41 @@ public class FriendsTab extends AppCompatActivity{
             @Override
             public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
                 for (int i=0;i<response.body().getUsers().size();i++){
-                    Log.d("###Friends", response.body().getUsers().get(i).getName());
-                    String name =response.body().getUsers().get(i).getName();
-                    String email =response.body().getUsers().get(i).getEmail();
-                    String id =response.body().getUsers().get(i).getId();
-                    String image =response.body().getUsers().get(i).getPassword();
-                    friendslist.add(new User(name,email,id,"",image));
+                    if (Integer.parseInt(response.body().getUsers().get(i).getstatus())==1) {
+                        Log.d("###Friends", response.body().getUsers().get(i).getName());
+                        String name = response.body().getUsers().get(i).getName();
+                        String email = response.body().getUsers().get(i).getEmail();
+                        String id = response.body().getUsers().get(i).getId();
+                        String image = response.body().getUsers().get(i).getPassword();
+                        friendslist.add(new User(name, email, id, "", image));
+                    }
                 }
+                FriendAPI.Factory.getInstance().getFriends2(session.getuserid()).enqueue(new Callback<UserResponse>() {
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        Log.d("###Friends", ""+response.body().getUsers().size());
+                        for (int i = 0; i < response.body().getUsers().size(); i++) {
+                            Log.d("###Friends", response.body().getUsers().get(i).getName());
+                            if (Integer.parseInt(response.body().getUsers().get(i).getstatus()) == 1) {
+                                Log.d("###Friends", response.body().getUsers().get(i).getName());
+                                String name = response.body().getUsers().get(i).getName();
+                                String email = response.body().getUsers().get(i).getEmail();
+                                String id = response.body().getUsers().get(i).getId();
+                                String image = response.body().getUsers().get(i).getPassword();
+                                friendslist.add(new User(name, email, id, "", image));
+                            }
+                        }
+                        populateListView();
+                        registerClickCallback();
+                        pDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+
+                    }
+                });
 //                Log.d("Friends list", friendslist.get(0).getName());
-                populateListView();
-                registerClickCallback();
-                pDialog.dismiss();
             }
 
             @Override
@@ -92,7 +116,7 @@ public class FriendsTab extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View viewClicked, int position, long id) {
                 User clickedUser = friendslist.get(position);
                 //go to profile activity
-                Toast.makeText(FriendsTab.this, "You clicked "+position+" which is "+clickedUser.getId(), Toast.LENGTH_LONG).show();
+                Toast.makeText(FriendsTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
                 session.setProfile(clickedUser.getId());
                 session.setPrivacy(1);
                 startActivity(new Intent("android.intent.action.MAIN5"));

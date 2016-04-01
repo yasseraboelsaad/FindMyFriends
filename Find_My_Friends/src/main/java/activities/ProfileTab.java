@@ -48,9 +48,9 @@ public class ProfileTab extends AppCompatActivity {
     private Session session;
     Button btn_location;
     private ProgressDialog pDialog;
-    String url_update_user = "http://2690c7d9.ngrok.io/FindMyFriends/update_user.php";
-    String url_add_friend = "http://2690c7d9.ngrok.io/FindMyFriends/create_friends.php";
-    String url_delete_friend = "http://2690c7d9.ngrok.io/FindMyFriends/delete_friends.php";
+    String url_update_user = "http://7eccf019.ngrok.io/FindMyFriends/update_user.php";
+    String url_add_friend = "http://7eccf019.ngrok.io/FindMyFriends/create_friends.php";
+    String url_delete_friend = "http://7eccf019.ngrok.io/FindMyFriends/delete_friends.php";
     JSONParser jsonParser = new JSONParser();
 
     public void onCreate(Bundle savedInstanceState) {

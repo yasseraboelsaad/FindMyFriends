@@ -28,6 +28,9 @@ public class User {
     @SerializedName("image")
     @Expose
     private String image;
+    @SerializedName("status")
+    @Expose
+    private String status;
 
     public User(String Name, String email, String id, String password, String image){
         this.Name=Name;
@@ -172,6 +175,9 @@ public class User {
         this.image = image;
     }
 
+    public String getstatus() {
+        return status;
+    }
 
     @Override
     public String toString() {
