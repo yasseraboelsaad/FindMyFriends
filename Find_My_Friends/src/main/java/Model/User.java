@@ -31,6 +31,15 @@ public class User {
     @SerializedName("status")
     @Expose
     private String status;
+    @SerializedName("gx")
+    @Expose
+    private Float gx;
+    @SerializedName("gy")
+    @Expose
+    private Float gy;
+    @SerializedName("room")
+    @Expose
+    private String room;
 
     public User(String Name, String email, String id, String password, String image){
         this.Name=Name;
@@ -40,7 +49,7 @@ public class User {
         this.image=image;
     }
 
-    public User(String Name, String email, String id, String password, Double xcoord, Double ycoord, String image){
+    public User(String Name, String email, String id, String password, Double xcoord, Double ycoord, String image, String room){
         this.Name=Name;
         this.email=email;
         this.id=id;
@@ -48,6 +57,7 @@ public class User {
         this.xcoord=xcoord;
         this.ycoord=ycoord;
         this.image=image;
+        this.room=room;
     }
     /**
      *
@@ -179,9 +189,47 @@ public class User {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Float getGx() {
+        return gx;
+    }
+
+    public void setGx(Float gx) {
+        this.gx = gx;
+    }
+
+    public Float getGy() {
+        return gy;
+    }
+
+    public void setGy(Float gy) {
+        this.gy = gy;
+    }
+
+    /**
+     *
+     * @return
+     * The room
+     */
+    public String getRoom() {
+        return room;
+    }
+
+    /**
+     *
+     * @param room
+     * The room
+     */
+    public void setRoom(String room) {
+        this.room = room;
+    }
+
     @Override
     public String toString() {
-        return "{"+getName()+","+getId()+","+getEmail()+","+getPassword()+","+getXcoord()+","+getYcoord()+","+getImage()+"}";
+        return "{"+getName()+","+getId()+","+getEmail()+","+getPassword()+","+getXcoord()+","+getYcoord()+","+getImage()+","+getGx()+","+getGy()+"}";
     }
 
 }

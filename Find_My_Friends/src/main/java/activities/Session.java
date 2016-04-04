@@ -45,6 +45,10 @@ public class Session {
         prefs.edit().putString("profile", id).commit();
 
     }
+    public void setRoom(String id) {
+        prefs.edit().putString("room", id).commit();
+
+    }
 
     public String getuserid() {
         String id = prefs.getString("id","");
@@ -72,6 +76,10 @@ public class Session {
     }
     public String getProfile() {
         String id = prefs.getString("profile", "");
+        return id;
+    }
+    public String getRoom() {
+        String id = prefs.getString("room", "");
         return id;
     }
 }

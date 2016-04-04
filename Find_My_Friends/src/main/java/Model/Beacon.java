@@ -20,6 +20,9 @@ public class Beacon {
     @SerializedName("y")
     @Expose
     private String y;
+    @SerializedName("Building")
+    @Expose
+    private String Building;
 
     /**
      *
@@ -93,9 +96,27 @@ public class Beacon {
         this.y = y;
     }
 
+    /**
+     *
+     * @return
+     * The Building
+     */
+    public String getBuilding() {
+        return Building;
+    }
+
+    /**
+     *
+     * @param Building
+     * The y
+     */
+    public void setBuilding(String Building) {
+        this.Building = Building;
+    }
+
     @Override
     public String toString (){
-        return "{"+getUUID()+","+getLocation()+","+getX()+","+getY()+"}";
+        return "{"+getUUID()+","+getLocation()+","+getX()+","+getY()+","+getBuilding()+"}";
     }
 
 }

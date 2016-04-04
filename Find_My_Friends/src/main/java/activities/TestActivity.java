@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -40,6 +41,7 @@ import containers.BluetoothLeDeviceStore;
 import util.BluetoothLeScanner;
 import util.BluetoothUtils;
 import uk.co.alt236.easycursor.objectcursor.EasyObjectCursor;
+import util.GPSTracker;
 import util.JSONParser;
 
 public class TestActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -71,9 +73,14 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     double y2;
     double r2;
 
+    GPSTracker gps;
+
+    double gx,gy;
+    String room;
+
     double xcoord,ycoord;
 
-    String url_update_user = "http://ed18867c.ngrok.io/FindMyFriends/update_user.php";
+    String url_update_user = "http://ff8a3408.ngrok.io/FindMyFriends/update_user.php";
     JSONParser jsonParser = new JSONParser();
     private ProgressDialog pDialog;
 
@@ -111,8 +118,13 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
                 x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
                 y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
-                xcoord=x0;
-                ycoord=y0;
+                room = response.body().Beacons.get(0).getLocation();
+                session.setRoom(room);
+                Log.d("#####THE Y VALUE", y0 + "");
+                xcoord = x0;
+                ycoord = y0;
+                Log.d("###########closer to " + d1.getUUID(), "" + r0);
+                location.setText("Your current location is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
                 new UpdateUser().execute();
             }
 
@@ -122,8 +134,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         });
-        Log.d("###########closer to " + d1.getUUID(), "" + r0);
-        location.setText("Your current location is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
+
     }
 
     public void locateTwoBeacons() {
@@ -330,6 +341,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        room="null";
         session = new Session(this);
         ButterKnife.bind(this);
         mList.setOnItemClickListener(this);
@@ -339,6 +351,21 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         updateItemCount(0);
         location = (TextView) findViewById(R.id.tv_loc);
         location.setText("Your current location is: ");
+
+        gps = new GPSTracker(TestActivity.this);
+
+        if(gps.canGetLocation()) {
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            gx=latitude;
+            gy=longitude;
+            Toast.makeText(
+                    getApplicationContext(),
+                    "Your Location is -\nLat: " + latitude + "\nLong: "
+                            + longitude, Toast.LENGTH_LONG).show();
+        } else {
+            gps.showSettingsAlert();
+        }
     }
 
     @Override
@@ -460,6 +487,9 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             params.add(new BasicNameValuePair("xcoord", ""+xcoord));
             params.add(new BasicNameValuePair("ycoord", ""+ycoord));
             params.add(new BasicNameValuePair("image", session.getuserImage()));
+            params.add(new BasicNameValuePair("gx", ""+gx));
+            params.add(new BasicNameValuePair("gy", ""+gy));
+            params.add(new BasicNameValuePair("room",room));
 
             JSONObject json = jsonParser.makeHttpRequest(url_update_user,
                     "POST", params);
