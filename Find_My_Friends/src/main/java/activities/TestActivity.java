@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.logging.Handler;
 
 import Model.Beacon;
 import Model.BeaconResponse;
@@ -43,6 +44,8 @@ import util.BluetoothUtils;
 import uk.co.alt236.easycursor.objectcursor.EasyObjectCursor;
 import util.GPSTracker;
 import util.JSONParser;
+import android.os.Handler;
+
 
 public class TestActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     @Bind(R.id.tvBluetoothLe)
@@ -74,13 +77,14 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     double r2;
 
     GPSTracker gps;
+    Boolean located = false;
 
     double gx,gy;
     String room;
 
     double xcoord,ycoord;
 
-    String url_update_user = "http://ff8a3408.ngrok.io/FindMyFriends/update_user.php";
+    String url_update_user = "http://f7d352a4.ngrok.io/FindMyFriends/update_user.php";
     JSONParser jsonParser = new JSONParser();
     private ProgressDialog pDialog;
 
@@ -98,17 +102,28 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                     updateItemCount(mLeDeviceListAdapter.getCount());
                 }
             });
+
             if (mDeviceStore.getDeviceList().size() > 2) {
-                locateThreeBeacons();
+//                locateThreeBeacons();
             } else if (mDeviceStore.getDeviceList().size() == 2) {
-                locateTwoBeacons();
+//                locateTwoBeacons();
             } else if (mDeviceStore.getDeviceList().size() == 1) {
                 locateOneBeacon();
             }
         }
     };
+    public void locateNoBeacon(){
+        located=true;
+        mScanner.scanLeDevice(-1, false);
+        invalidateOptionsMenu();
+        xcoord=-1;
+        ycoord=-1;
+        location.setText("Your current location by gps is: "+gx+","+gy);
+        new UpdateUser().execute();
+    }
 
     public void locateOneBeacon() {
+        located=true;
         mScanner.scanLeDevice(-1, false);
         invalidateOptionsMenu();
         final IBeaconDevice d1 = new IBeaconDevice(mDeviceStore.getDeviceList().get(0));
@@ -124,7 +139,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                 xcoord = x0;
                 ycoord = y0;
                 Log.d("###########closer to " + d1.getUUID(), "" + r0);
-                location.setText("Your current location is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
+                location.setText("Your current location by beacon is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
                 new UpdateUser().execute();
             }
 
@@ -137,205 +152,205 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
-    public void locateTwoBeacons() {
-        final IBeaconDevice d1 = new IBeaconDevice(mDeviceStore.getDeviceList().get(0));
-        final IBeaconDevice d2 = new IBeaconDevice(mDeviceStore.getDeviceList().get(1));
-
-        r0 = Math.round(d1.getAccuracy());
-        r1 = Math.round(d2.getAccuracy());
-
-
-        BeaconAPI.Factory.getInstance().getBeacon(d1.getUUID()).enqueue(new Callback<BeaconResponse>() {
-
-            @Override
-            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
-                x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
-                y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
-
-
-                BeaconAPI.Factory.getInstance().getBeacon(d2.getUUID()).enqueue(new Callback<BeaconResponse>() {
-
-                    @Override
-                    public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
-                        x1 = Double.parseDouble(response.body().Beacons.get(0).getX());
-                        y1 = Double.parseDouble(response.body().Beacons.get(0).getY());
-
-                        double a, dx, dy, d, h, rx, ry;
-                        double point2_x, point2_y;
-                /* dx and dy are the vertical and horizontal distances between
-    * the circle centers.
-    */
-                        dx = x1 - x0;
-                        dy = y1 - y0;
-
-    /* Determine the straight-line distance between the centers. */
-                        d = Math.sqrt((dy * dy) + (dx * dx));
-
-    /* 'point 2' is the point where the line through the circle
-    * intersection points crosses the line between the circle
-    * centers.
-    */
-
-    /* Determine the distance from point 0 to point 2. */
-                        a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d);
-
-    /* Determine the coordinates of point 2. */
-                        point2_x = x0 + (dx * a / d);
-                        point2_y = y0 + (dy * a / d);
-
-    /* Determine the distance from point 2 to either of the
-    * intersection points.
-    */
-                        h = Math.sqrt((r0 * r0) - (a * a));
-
-    /* Now determine the offsets of the intersection points from
-    * point 2.
-    */
-                        rx = -dy * (h / d);
-                        ry = dx * (h / d);
-
-    /* Determine the absolute intersection points. */
-                        double intersectionPoint1_x = point2_x + rx;
-                        double intersectionPoint2_x = point2_x - rx;
-                        double intersectionPoint1_y = point2_y + ry;
-                        double intersectionPoint2_y = point2_y - ry;
-                        xcoord=intersectionPoint1_x;
-                        ycoord=intersectionPoint1_y;
-                        new UpdateUser().execute();
-                        location.setText("Your location is either: (" + intersectionPoint1_x + "," + intersectionPoint1_y + ") or (" + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
-                    }
-
-                    @Override
-                    public void onFailure(Call<BeaconResponse> call, Throwable t) {
-
-                    }
-                });
-
-
-            }
-
-            @Override
-            public void onFailure(Call<BeaconResponse> call, Throwable t) {
-
-            }
-        });
-    }
-
-    public void locateThreeBeacons() {
-        final IBeaconDevice b1 = new IBeaconDevice(mDeviceStore.getDeviceList().get(0));
-        final IBeaconDevice b2 = new IBeaconDevice(mDeviceStore.getDeviceList().get(1));
-        final IBeaconDevice b3 = new IBeaconDevice(mDeviceStore.getDeviceList().get(2));
-
-
-        r0 = Math.round(b1.getAccuracy());
-        r1 = Math.round(b2.getAccuracy());
-        r2 = Math.round(b3.getAccuracy());
-
-        BeaconAPI.Factory.getInstance().getBeacon(b1.getUUID()).enqueue(new Callback<BeaconResponse>() {
-            @Override
-            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
-                x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
-                y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
-
-                BeaconAPI.Factory.getInstance().getBeacon(b2.getUUID()).enqueue(new Callback<BeaconResponse>() {
-                    @Override
-                    public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
-                        x1 = Double.parseDouble(response.body().Beacons.get(0).getX());
-                        y1 = Double.parseDouble(response.body().Beacons.get(0).getY());
-
-                        BeaconAPI.Factory.getInstance().getBeacon(b3.getUUID()).enqueue(new Callback<BeaconResponse>() {
-                            @Override
-                            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
-                                x2 = Double.parseDouble(response.body().Beacons.get(0).getX());
-                                y2 = Double.parseDouble(response.body().Beacons.get(0).getY());
-
-                                double a, dx, dy, d, h, rx, ry;
-                                double point2_x, point2_y;
-
-    /* dx and dy are the vertical and horizontal distances between
-    * the circle centers.
-    */
-                                dx = x1 - x0;
-                                dy = y1 - y0;
-
-    /* Determine the straight-line distance between the centers. */
-                                d = Math.sqrt((dy * dy) + (dx * dx));
-
-
-    /* 'point 2' is the point where the line through the circle
-    * intersection points crosses the line between the circle
-    * centers.
-    */
-
-    /* Determine the distance from point 0 to point 2. */
-                                a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d);
-
-    /* Determine the coordinates of point 2. */
-                                point2_x = x0 + (dx * a / d);
-                                point2_y = y0 + (dy * a / d);
-
-    /* Determine the distance from point 2 to either of the
-    * intersection points.
-    */
-                                h = Math.sqrt((r0 * r0) - (a * a));
-
-    /* Now determine the offsets of the intersection points from
-    * point 2.
-    */
-                                rx = -dy * (h / d);
-                                ry = dx * (h / d);
-
-    /* Determine the absolute intersection points. */
-                                double intersectionPoint1_x = point2_x + rx;
-                                double intersectionPoint2_x = point2_x - rx;
-                                double intersectionPoint1_y = point2_y + ry;
-                                double intersectionPoint2_y = point2_y - ry;
-                                TextView ip1 = (TextView) findViewById(R.id.tv_ip1);
-                                ip1.setText("(" + intersectionPoint1_x + "," + intersectionPoint1_y + ")");
-                                TextView ip2 = (TextView) findViewById(R.id.tv_ip2);
-                                ip2.setText("(" + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
-                                TextView r3 = (TextView) findViewById(R.id.tv_r3);
-                                r3.setText(Math.round(b3.getAccuracy()) + "m");
-                                double cond1 = (intersectionPoint1_x - 2) * (intersectionPoint1_x - 2) + (intersectionPoint1_y - 2) * (intersectionPoint1_y - 2);
-                                double cond2 = (intersectionPoint2_x - 2) * (intersectionPoint2_x - 2) + (intersectionPoint2_y - 2) * (intersectionPoint2_y - 2);
-                                if (cond1 <= r2 * r2 + 2 && cond1 >= r2 * r2 - 2) {
-                                    location.setText("Your current location is: " + intersectionPoint1_x + "," + intersectionPoint1_y + ")");
-                                    xcoord=intersectionPoint1_x;
-                                    ycoord=intersectionPoint1_y;
-                                    new UpdateUser().execute();
-                                } else if (cond2 <= r2 * r2 + 2 && cond2 >= r2 * r2 - 2) {
-                                    location.setText("Your current location is: " + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
-                                    xcoord=intersectionPoint2_x;
-                                    ycoord=intersectionPoint2_y;
-                                    new UpdateUser().execute();
-                                } else {
-                                    location.setText("Your current location could not be determined.");
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<BeaconResponse> call, Throwable t) {
-                                Log.e("Failedz", t.getMessage());
-                            }
-
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(Call<BeaconResponse> call, Throwable t) {
-                        Log.e("Failedz", t.getMessage());
-                    }
-
-                });
-            }
-
-            @Override
-            public void onFailure(Call<BeaconResponse> call, Throwable t) {
-                Log.e("Failedz", t.getMessage());
-            }
-
-        });
-    }
+//    public void locateTwoBeacons() {
+//        final IBeaconDevice d1 = new IBeaconDevice(mDeviceStore.getDeviceList().get(0));
+//        final IBeaconDevice d2 = new IBeaconDevice(mDeviceStore.getDeviceList().get(1));
+//
+//        r0 = Math.round(d1.getAccuracy());
+//        r1 = Math.round(d2.getAccuracy());
+//
+//
+//        BeaconAPI.Factory.getInstance().getBeacon(d1.getUUID()).enqueue(new Callback<BeaconResponse>() {
+//
+//            @Override
+//            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
+//                x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
+//                y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
+//
+//
+//                BeaconAPI.Factory.getInstance().getBeacon(d2.getUUID()).enqueue(new Callback<BeaconResponse>() {
+//
+//                    @Override
+//                    public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
+//                        x1 = Double.parseDouble(response.body().Beacons.get(0).getX());
+//                        y1 = Double.parseDouble(response.body().Beacons.get(0).getY());
+//
+//                        double a, dx, dy, d, h, rx, ry;
+//                        double point2_x, point2_y;
+//                /* dx and dy are the vertical and horizontal distances between
+//    * the circle centers.
+//    */
+//                        dx = x1 - x0;
+//                        dy = y1 - y0;
+//
+//    /* Determine the straight-line distance between the centers. */
+//                        d = Math.sqrt((dy * dy) + (dx * dx));
+//
+//    /* 'point 2' is the point where the line through the circle
+//    * intersection points crosses the line between the circle
+//    * centers.
+//    */
+//
+//    /* Determine the distance from point 0 to point 2. */
+//                        a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d);
+//
+//    /* Determine the coordinates of point 2. */
+//                        point2_x = x0 + (dx * a / d);
+//                        point2_y = y0 + (dy * a / d);
+//
+//    /* Determine the distance from point 2 to either of the
+//    * intersection points.
+//    */
+//                        h = Math.sqrt((r0 * r0) - (a * a));
+//
+//    /* Now determine the offsets of the intersection points from
+//    * point 2.
+//    */
+//                        rx = -dy * (h / d);
+//                        ry = dx * (h / d);
+//
+//    /* Determine the absolute intersection points. */
+//                        double intersectionPoint1_x = point2_x + rx;
+//                        double intersectionPoint2_x = point2_x - rx;
+//                        double intersectionPoint1_y = point2_y + ry;
+//                        double intersectionPoint2_y = point2_y - ry;
+//                        xcoord=intersectionPoint1_x;
+//                        ycoord=intersectionPoint1_y;
+//                        new UpdateUser().execute();
+//                        location.setText("Your location is either: (" + intersectionPoint1_x + "," + intersectionPoint1_y + ") or (" + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<BeaconResponse> call, Throwable t) {
+//
+//                    }
+//                });
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BeaconResponse> call, Throwable t) {
+//
+//            }
+//        });
+//    }
+//
+//    public void locateThreeBeacons() {
+//        final IBeaconDevice b1 = new IBeaconDevice(mDeviceStore.getDeviceList().get(0));
+//        final IBeaconDevice b2 = new IBeaconDevice(mDeviceStore.getDeviceList().get(1));
+//        final IBeaconDevice b3 = new IBeaconDevice(mDeviceStore.getDeviceList().get(2));
+//
+//
+//        r0 = Math.round(b1.getAccuracy());
+//        r1 = Math.round(b2.getAccuracy());
+//        r2 = Math.round(b3.getAccuracy());
+//
+//        BeaconAPI.Factory.getInstance().getBeacon(b1.getUUID()).enqueue(new Callback<BeaconResponse>() {
+//            @Override
+//            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
+//                x0 = Double.parseDouble(response.body().Beacons.get(0).getX());
+//                y0 = Double.parseDouble(response.body().Beacons.get(0).getY());
+//
+//                BeaconAPI.Factory.getInstance().getBeacon(b2.getUUID()).enqueue(new Callback<BeaconResponse>() {
+//                    @Override
+//                    public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
+//                        x1 = Double.parseDouble(response.body().Beacons.get(0).getX());
+//                        y1 = Double.parseDouble(response.body().Beacons.get(0).getY());
+//
+//                        BeaconAPI.Factory.getInstance().getBeacon(b3.getUUID()).enqueue(new Callback<BeaconResponse>() {
+//                            @Override
+//                            public void onResponse(Call<BeaconResponse> call, Response<BeaconResponse> response) {
+//                                x2 = Double.parseDouble(response.body().Beacons.get(0).getX());
+//                                y2 = Double.parseDouble(response.body().Beacons.get(0).getY());
+//
+//                                double a, dx, dy, d, h, rx, ry;
+//                                double point2_x, point2_y;
+//
+//    /* dx and dy are the vertical and horizontal distances between
+//    * the circle centers.
+//    */
+//                                dx = x1 - x0;
+//                                dy = y1 - y0;
+//
+//    /* Determine the straight-line distance between the centers. */
+//                                d = Math.sqrt((dy * dy) + (dx * dx));
+//
+//
+//    /* 'point 2' is the point where the line through the circle
+//    * intersection points crosses the line between the circle
+//    * centers.
+//    */
+//
+//    /* Determine the distance from point 0 to point 2. */
+//                                a = ((r0 * r0) - (r1 * r1) + (d * d)) / (2.0 * d);
+//
+//    /* Determine the coordinates of point 2. */
+//                                point2_x = x0 + (dx * a / d);
+//                                point2_y = y0 + (dy * a / d);
+//
+//    /* Determine the distance from point 2 to either of the
+//    * intersection points.
+//    */
+//                                h = Math.sqrt((r0 * r0) - (a * a));
+//
+//    /* Now determine the offsets of the intersection points from
+//    * point 2.
+//    */
+//                                rx = -dy * (h / d);
+//                                ry = dx * (h / d);
+//
+//    /* Determine the absolute intersection points. */
+//                                double intersectionPoint1_x = point2_x + rx;
+//                                double intersectionPoint2_x = point2_x - rx;
+//                                double intersectionPoint1_y = point2_y + ry;
+//                                double intersectionPoint2_y = point2_y - ry;
+//                                TextView ip1 = (TextView) findViewById(R.id.tv_ip1);
+//                                ip1.setText("(" + intersectionPoint1_x + "," + intersectionPoint1_y + ")");
+//                                TextView ip2 = (TextView) findViewById(R.id.tv_ip2);
+//                                ip2.setText("(" + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
+//                                TextView r3 = (TextView) findViewById(R.id.tv_r3);
+//                                r3.setText(Math.round(b3.getAccuracy()) + "m");
+//                                double cond1 = (intersectionPoint1_x - 2) * (intersectionPoint1_x - 2) + (intersectionPoint1_y - 2) * (intersectionPoint1_y - 2);
+//                                double cond2 = (intersectionPoint2_x - 2) * (intersectionPoint2_x - 2) + (intersectionPoint2_y - 2) * (intersectionPoint2_y - 2);
+//                                if (cond1 <= r2 * r2 + 2 && cond1 >= r2 * r2 - 2) {
+//                                    location.setText("Your current location is: " + intersectionPoint1_x + "," + intersectionPoint1_y + ")");
+//                                    xcoord=intersectionPoint1_x;
+//                                    ycoord=intersectionPoint1_y;
+//                                    new UpdateUser().execute();
+//                                } else if (cond2 <= r2 * r2 + 2 && cond2 >= r2 * r2 - 2) {
+//                                    location.setText("Your current location is: " + intersectionPoint2_x + "," + intersectionPoint2_y + ")");
+//                                    xcoord=intersectionPoint2_x;
+//                                    ycoord=intersectionPoint2_y;
+//                                    new UpdateUser().execute();
+//                                } else {
+//                                    location.setText("Your current location could not be determined.");
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<BeaconResponse> call, Throwable t) {
+//                                Log.e("Failedz", t.getMessage());
+//                            }
+//
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<BeaconResponse> call, Throwable t) {
+//                        Log.e("Failedz", t.getMessage());
+//                    }
+//
+//                });
+//            }
+//
+//            @Override
+//            public void onFailure(Call<BeaconResponse> call, Throwable t) {
+//                Log.e("Failedz", t.getMessage());
+//            }
+//
+//        });
+//    }
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -448,6 +463,15 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             invalidateOptionsMenu();
 
         }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                if (!located)
+                locateNoBeacon();
+            }
+        }, 5000);
     }
 
     private void updateItemCount(final int count) {

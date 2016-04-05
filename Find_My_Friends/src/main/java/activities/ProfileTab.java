@@ -48,7 +48,7 @@ public class ProfileTab extends AppCompatActivity {
     private Session session;
     Button btn_location;
     private ProgressDialog pDialog;
-    String baseurl ="http://ff8a3408.ngrok.io";
+    String baseurl ="http://f7d352a4.ngrok.io";
     String url_update_user = baseurl+"/FindMyFriends/update_user.php";
     String url_add_friend = baseurl+"/FindMyFriends/create_friends.php";
     String url_delete_friend = baseurl+"/FindMyFriends/delete_friends.php";
