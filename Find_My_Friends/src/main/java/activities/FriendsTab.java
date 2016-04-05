@@ -118,6 +118,7 @@ public class FriendsTab extends AppCompatActivity{
                 Toast.makeText(FriendsTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
                 session.setProfile(clickedUser.getId());
                 session.setPrivacy(1);
+                session.setownprofile("false");
                 startActivity(new Intent("android.intent.action.MAIN5"));
             }
         });

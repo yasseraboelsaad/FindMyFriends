@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +29,9 @@ import java.util.List;
 
 import Model.Beacon;
 import Model.BeaconResponse;
+import Model.UserResponse;
 import Remote.BeaconAPI;
+import Remote.FriendAPI;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -46,16 +49,23 @@ import util.GPSTracker;
 import util.JSONParser;
 import android.os.Handler;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class TestActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
-    @Bind(R.id.tvBluetoothLe)
-    protected TextView mTvBluetoothLeStatus;
-    @Bind(R.id.tvBluetoothStatus)
-    protected TextView mTvBluetoothStatus;
-    @Bind(R.id.tvItemCount)
-    protected TextView mTvItemCount;
-    @Bind(android.R.id.list)
-    protected ListView mList;
+
+public class TestActivity extends AppCompatActivity  {
+//    @Bind(R.id.tvBluetoothLe)
+//    protected TextView mTvBluetoothLeStatus;
+//    @Bind(R.id.tvBluetoothStatus)
+//    protected TextView mTvBluetoothStatus;
+//    @Bind(R.id.tvItemCount)
+//    protected TextView mTvItemCount;
+//    @Bind(android.R.id.list)
+//    protected ListView mList;
 
 
     private BluetoothUtils mBluetoothUtils;
@@ -78,6 +88,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
 
     GPSTracker gps;
     Boolean located = false;
+    private GoogleMap map;
 
     double gx,gy;
     String room;
@@ -118,7 +129,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         invalidateOptionsMenu();
         xcoord=-1;
         ycoord=-1;
-        location.setText("Your current location by gps is: "+gx+","+gy);
+//        location.setText("Your current location by gps is: "+gx+","+gy);
         new UpdateUser().execute();
     }
 
@@ -139,7 +150,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
                 xcoord = x0;
                 ycoord = y0;
                 Log.d("###########closer to " + d1.getUUID(), "" + r0);
-                location.setText("Your current location by beacon is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
+//                location.setText("Your current location by beacon is: " + r0 + "m away from beacon (" + x0 + "," + y0 + ")");
                 new UpdateUser().execute();
             }
 
@@ -358,15 +369,89 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_test);
         room="null";
         session = new Session(this);
+        session.setownprofile("true");
         ButterKnife.bind(this);
-        mList.setOnItemClickListener(this);
+//        mList.setOnItemClickListener(this);
         mDeviceStore = new BluetoothLeDeviceStore();
+        map  = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        pDialog = new ProgressDialog(TestActivity.this);
+        pDialog.setMessage("Finding your friends ..");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(true);
+        pDialog.show();
+        map.setMyLocationEnabled(true);
+        final LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        FriendAPI.Factory.getInstance().getFriends1(session.getuserid()).enqueue(new Callback<UserResponse>() {
+            @Override
+            public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                for (int i=0;i<response.body().getUsers().size();i++){
+                    if (Integer.parseInt(response.body().getUsers().get(i).getstatus())==1) {
+                        String name = response.body().getUsers().get(i).getName();
+                        Float glat = response.body().getUsers().get(i).getGx();
+                        Float glong = response.body().getUsers().get(i).getGy();
+                        String room = response.body().getUsers().get(i).getRoom();
+                        final LatLng LOCATION_C = new LatLng(glat,glong);
+                        builder.include(LOCATION_C);
+                        if (room.contains(".")) {
+                            map.addMarker(new MarkerOptions().position(LOCATION_C).title(name+" is in room "+room));
+                        }else {
+                            map.addMarker(new MarkerOptions().position(LOCATION_C).title(name+" is here!"));
+                        }
+                    }
+                }
+                FriendAPI.Factory.getInstance().getFriends2(session.getuserid()).enqueue(new Callback<UserResponse>() {
+
+                    @Override
+                    public void onResponse(Call<UserResponse> call, Response<UserResponse> response) {
+                        for (int i=0;i<response.body().getUsers().size();i++){
+                            if (Integer.parseInt(response.body().getUsers().get(i).getstatus())==1) {
+                                String name = response.body().getUsers().get(i).getName();
+                                Float glat = response.body().getUsers().get(i).getGx();
+                                Float glong = response.body().getUsers().get(i).getGy();
+                                String room = response.body().getUsers().get(i).getRoom();
+                                final LatLng LOCATION_C = new LatLng(glat,glong);
+                                builder.include(LOCATION_C);
+                                if (room != null && room.contains(".")) {
+                                    map.addMarker(new MarkerOptions().position(LOCATION_C).title(name+" is in room "+room));
+                                }else {
+                                    map.addMarker(new MarkerOptions().position(LOCATION_C).title(name+" is here!"));
+                                }
+                            }
+                        }
+                        LatLngBounds bounds = builder.build();
+                        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 20));
+                        pDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(Call<UserResponse> call, Throwable t) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<UserResponse> call, Throwable t) {
+
+            }
+        });
         mBluetoothUtils = new BluetoothUtils(this);
         mScanner = new BluetoothLeScanner(mLeScanCallback, mBluetoothUtils);
         updateItemCount(0);
-        location = (TextView) findViewById(R.id.tv_loc);
-        location.setText("Your current location is: ");
-
+//        location = (TextView) findViewById(R.id.tv_loc);
+//        location.setText("Your current location is: ");
+        Button btn_sync = (Button) findViewById(R.id.btn_sync);
+        btn_sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pDialog = new ProgressDialog(TestActivity.this);
+                pDialog.setMessage("Updating Location..");
+                pDialog.setIndeterminate(false);
+                pDialog.setCancelable(true);
+                pDialog.show();
+                startScan();
+            }
+        });
         gps = new GPSTracker(TestActivity.this);
 
         if(gps.canGetLocation()) {
@@ -374,52 +459,48 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
             double longitude = gps.getLongitude();
             gx=latitude;
             gy=longitude;
-            Toast.makeText(
-                    getApplicationContext(),
-                    "Your Location is -\nLat: " + latitude + "\nLong: "
-                            + longitude, Toast.LENGTH_LONG).show();
         } else {
             gps.showSettingsAlert();
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        if (!mScanner.isScanning()) {
-            menu.findItem(R.id.menu_stop).setVisible(false);
-            menu.findItem(R.id.menu_scan).setVisible(true);
-            menu.findItem(R.id.menu_refresh).setActionView(null);
-        } else {
-            menu.findItem(R.id.menu_stop).setVisible(true);
-            menu.findItem(R.id.menu_scan).setVisible(false);
-            menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_progress_indeterminate);
-        }
+//    @Override
+//    public boolean onCreateOptionsMenu(final Menu menu) {
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        if (!mScanner.isScanning()) {
+//            menu.findItem(R.id.menu_stop).setVisible(false);
+//            menu.findItem(R.id.menu_scan).setVisible(true);
+//            menu.findItem(R.id.menu_refresh).setActionView(null);
+//        } else {
+//            menu.findItem(R.id.menu_stop).setVisible(true);
+//            menu.findItem(R.id.menu_scan).setVisible(false);
+//            menu.findItem(R.id.menu_refresh).setActionView(R.layout.actionbar_progress_indeterminate);
+//        }
+//
+//
+//        return true;
+//    }
 
-
-        return true;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        final BluetoothLeDevice device = mLeDeviceListAdapter.getItem(position);
-        if (device == null) return;
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_scan:
-                startScan();
-                break;
-            case R.id.menu_stop:
-                mScanner.scanLeDevice(-1, false);
-                invalidateOptionsMenu();
-                break;
-        }
-        return true;
-    }
+//    @Override
+//    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//        final BluetoothLeDevice device = mLeDeviceListAdapter.getItem(position);
+//        if (device == null) return;
+//
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(final MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.menu_scan:
+//                startScan();
+//                break;
+//            case R.id.menu_stop:
+//                mScanner.scanLeDevice(-1, false);
+//                invalidateOptionsMenu();
+//                break;
+//        }
+//        return true;
+//    }
 
     @Override
     protected void onPause() {
@@ -433,17 +514,17 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         final boolean mIsBluetoothOn = mBluetoothUtils.isBluetoothOn();
         final boolean mIsBluetoothLePresent = mBluetoothUtils.isBluetoothLeSupported();
 
-        if (mIsBluetoothOn) {
-            mTvBluetoothStatus.setText(R.string.on);
-        } else {
-            mTvBluetoothStatus.setText(R.string.off);
-        }
-
-        if (mIsBluetoothLePresent) {
-            mTvBluetoothLeStatus.setText(R.string.supported);
-        } else {
-            mTvBluetoothLeStatus.setText(R.string.not_supported);
-        }
+//        if (mIsBluetoothOn) {
+//            mTvBluetoothStatus.setText(R.string.on);
+//        } else {
+//            mTvBluetoothStatus.setText(R.string.off);
+//        }
+//
+//        if (mIsBluetoothLePresent) {
+//            mTvBluetoothLeStatus.setText(R.string.supported);
+//        } else {
+//            mTvBluetoothLeStatus.setText(R.string.not_supported);
+//        }
 
         invalidateOptionsMenu();
     }
@@ -455,7 +536,7 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         updateItemCount(0);
 
         mLeDeviceListAdapter = new LeDeviceListAdapter(this, mDeviceStore.getDeviceCursor());
-        mList.setAdapter(mLeDeviceListAdapter);
+//        mList.setAdapter(mLeDeviceListAdapter);
 
         mBluetoothUtils.askUserToEnableBluetoothIfNeeded();
         if (mIsBluetoothOn && mIsBluetoothLePresent) {
@@ -475,10 +556,10 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void updateItemCount(final int count) {
-        mTvItemCount.setText(
-                getString(
-                        R.string.formatter_item_count,
-                        String.valueOf(count)));
+//        mTvItemCount.setText(
+//                getString(
+//                        R.string.formatter_item_count,
+//                        String.valueOf(count)));
     }
 
     class UpdateUser extends AsyncTask<String, String, String> {
@@ -489,11 +570,6 @@ public class TestActivity extends AppCompatActivity implements AdapterView.OnIte
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(TestActivity.this);
-            pDialog.setMessage("Updating Location..");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
         }
 
 

@@ -55,6 +55,11 @@ public class ProfileTab extends AppCompatActivity {
     String url_update_friend = baseurl+"/FindMyFriends/update_friends.php";
     JSONParser jsonParser = new JSONParser();
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_profile);
@@ -77,12 +82,13 @@ public class ProfileTab extends AppCompatActivity {
         pDialog.show();
 
         //Users profile
-        if (session.getuserid().equals(session.getProfile())){
+        if (session.getownprofile().equals("true")){
             et_name.setText(session.getuserName());
             et_email.setText(session.getuserEmail());
             et_id.setText(session.getuserid());
             et_password.setText(session.getuserPassword());
             et_image.setText(session.getuserImage());
+            btn_location.setVisibility(View.GONE);
             if (session.getuserImage().contains("http")){
                 Picasso.with(ProfileTab.this).load(session.getuserImage()).into(iv_image);
             }else {
@@ -105,6 +111,9 @@ public class ProfileTab extends AppCompatActivity {
         }
         //Not Friend
         else if (session.getPrivacy()==0){
+            et_name.setKeyListener(null);
+            et_email.setKeyListener(null);
+            et_id.setKeyListener(null);
             et_password.setVisibility(View.GONE);
             et_image.setVisibility(View.GONE);
             txt_image.setVisibility(View.GONE);
@@ -140,6 +149,9 @@ public class ProfileTab extends AppCompatActivity {
         }
         //Friend
         else if (session.getPrivacy()==1){
+            et_name.setKeyListener(null);
+            et_email.setKeyListener(null);
+            et_id.setKeyListener(null);
             txt_image.setVisibility(View.GONE);
             txt_password.setVisibility(View.GONE);
             btn_save.setText("Remove Friend");
@@ -179,6 +191,9 @@ public class ProfileTab extends AppCompatActivity {
             });
             //Request
         }else if (session.getPrivacy()==2){
+            et_name.setKeyListener(null);
+            et_email.setKeyListener(null);
+            et_id.setKeyListener(null);
             et_password.setVisibility(View.GONE);
             et_image.setVisibility(View.GONE);
             txt_image.setVisibility(View.GONE);

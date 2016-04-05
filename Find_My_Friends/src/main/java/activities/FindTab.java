@@ -102,6 +102,7 @@ public class FindTab extends AppCompatActivity {
                 Toast.makeText(FindTab.this, "You clicked " + position + " which is " + clickedUser.getId(), Toast.LENGTH_LONG).show();
                 session.setProfile(clickedUser.getId());
                 session.setPrivacy(0);
+                session.setownprofile("false");
                 startActivity(new Intent("android.intent.action.MAIN5"));
             }
         });
