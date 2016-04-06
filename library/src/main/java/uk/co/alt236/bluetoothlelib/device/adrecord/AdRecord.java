@@ -123,7 +123,7 @@ public final class AdRecord implements Parcelable {
     private static final String PARCEL_RECORD_DATA = "record_data";
     private static final String PARCEL_RECORD_TYPE = "record_type";
     private static final String PARCEL_RECORD_LENGTH = "record_length";
-    /* Model Object Definition */
+    /* com.bachelorproject.yasser.findmyfriends.Model Object Definition */
     private final int mLength;
     private final int mType;
     private final byte[] mData;

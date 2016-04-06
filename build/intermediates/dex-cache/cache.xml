@@ -37,7 +37,7 @@
         <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/butterknife-7.0.1-e7ad56efa2d24bd982430c3886241646bdd2fde7.jar" />
     </item>
     <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/8.4.0/jars/classes.jar"
+        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-com.bachelorproject.yasser.findmyfriends.services-base/8.4.0/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="fef2b3e4b6b1b0e5fe7b69fa137a5fa55a3182ab">
@@ -65,7 +65,7 @@
         <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-1191be11403f7ed0e873a9789e7eba4f490b37fa.jar" />
     </item>
     <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.4.0/jars/classes.jar"
+        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-com.bachelorproject.yasser.findmyfriends.services-basement/8.4.0/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="8e673cdfadd8f2d98fdb2fda2285c30f6e449782">
@@ -86,7 +86,7 @@
         <dex dex="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/pre-dexed/debug/classes-3c0221fe671b0ea23fae228e60ff3d1da51faab9.jar" />
     </item>
     <item
-        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/8.4.0/jars/classes.jar"
+        jar="/Users/Yasser/University/Bachelor Project/Find My Friends/Find_My_Friends/build/intermediates/exploded-aar/com.google.android.gms/play-com.bachelorproject.yasser.findmyfriends.services-maps/8.4.0/jars/classes.jar"
         jumboMode="false"
         revision="22.0.1"
         sha1="04de44f90606c77f3b28cf44861f306290505aac">
